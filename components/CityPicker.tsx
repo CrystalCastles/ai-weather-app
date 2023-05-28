@@ -2,9 +2,11 @@
 
 import { Country, City } from "country-state-city";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import { GlobeIcon } from "@heroicons/react/solid";
+import { AsyncPaginate } from "react-select-async-paginate";
+import type { GroupBase, OptionsOrGroups } from "react-select";
 
 type option = {
   value: {
@@ -26,19 +28,67 @@ type cityOption = {
   label: string;
 } | null;
 
-const options = Country.getAllCountries().map((country) => ({
-  value: {
-    latitude: country.latitude,
-    longitude: country.longitude,
-    isoCode: country.isoCode,
-  },
-  label: country.name,
-}));
-
 function CityPicker() {
   const [selectedCountry, setSelectedCountry] = useState<option>(null);
   const [selectedCity, setSelectedCity] = useState<cityOption>(null);
   const router = useRouter();
+
+  const options = Country.getAllCountries().map((country) => ({
+    value: {
+      latitude: country.latitude,
+      longitude: country.longitude,
+      isoCode: country.isoCode,
+    },
+    label: country.name,
+  }));
+
+  let cityOptions = City.getCitiesOfCountry(selectedCountry?.value.isoCode!)?.map(state => ({
+    value: {
+      latitude: state.latitude!,
+      longitude: state.longitude!,
+      countryCode: state.countryCode,
+      name: state.name,
+      stateCode: state.stateCode,
+    },
+    label: state.name
+  }));
+
+  const sleep = (ms: number) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, ms);
+  });
+
+  const loadOptions = async (
+    search: string,
+    prevOptions: OptionsOrGroups<cityOption, GroupBase<cityOption>>
+  ) => {
+    await sleep(1000);
+
+    let filteredOptions;
+    
+    if (!search) {
+      filteredOptions = cityOptions;
+    } else {
+      const searchLower = search.toLowerCase();
+
+      filteredOptions = cityOptions?.filter(({ label }) =>
+        label.toLowerCase().includes(searchLower)
+      );
+    }
+
+    const hasMore = filteredOptions.length > prevOptions.length + 10;
+    const slicedOptions = filteredOptions.slice(
+      prevOptions.length,
+      prevOptions.length + 10
+    );
+
+    return {
+      options: slicedOptions,
+      hasMore
+    };
+  };
 
   const handleSelectedCountry = (option: option) => {
     setSelectedCountry(option);
@@ -48,6 +98,11 @@ function CityPicker() {
   const handleSelectedCity = (option: cityOption) => {
     setSelectedCity(option);
     router.push(`/location/${option?.value.name}/${option?.value.latitude}/${option?.value.longitude}`)
+  };
+
+  const handleMenuClose = () => {
+    setSelectedCountry(null);
+    setSelectedCity(null);
   };
 
   return (
@@ -71,20 +126,11 @@ function CityPicker() {
             <GlobeIcon className="h-5 w-5 text-white"/>
             <label htmlFor="country">City</label>
           </div>
-          <Select
-            className="text-black"
+          <AsyncPaginate
             value={selectedCity}
+            loadOptions={loadOptions}
             onChange={handleSelectedCity}
-            options={City.getCitiesOfCountry(selectedCountry.value.isoCode)?.slice(0, 50).map(state => ({
-              value: {
-                latitude: state.latitude!,
-                longitude: state.longitude!,
-                countryCode: state.countryCode,
-                name: state.name,
-                stateCode: state.stateCode,
-              },
-              label: state.name
-            }))}
+            onMenuClose={handleMenuClose}
           />
         </div>
       )}
