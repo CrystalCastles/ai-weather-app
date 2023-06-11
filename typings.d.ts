@@ -75,6 +75,7 @@ interface Root {
   hourly_units: HourlyUnits;
   latitude: number;
   longitude: number;
+  temperature_unit: string;
   timezone: string;
   timezone_abbreviation: string;
   utc_offset_seconds: number;

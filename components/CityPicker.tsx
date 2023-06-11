@@ -66,7 +66,7 @@ function CityPicker() {
   ) => {
     await sleep(1000);
 
-    let filteredOptions;
+    let filteredOptions = null;
     
     if (!search) {
       filteredOptions = cityOptions;
@@ -78,8 +78,8 @@ function CityPicker() {
       );
     }
 
-    const hasMore = filteredOptions.length > prevOptions.length + 10;
-    const slicedOptions = filteredOptions.slice(
+    const hasMore = filteredOptions!.length > prevOptions.length + 10;
+    const slicedOptions = filteredOptions!.slice(
       prevOptions.length,
       prevOptions.length + 10
     );

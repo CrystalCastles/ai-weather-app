@@ -12,7 +12,7 @@ type Props = {
 
 function InformationPanel({ city, lat, long, results }: Props) {
   return (
-    <div className="bg-gradient-to-br from-[#394F68] to-[#183B7E] text-white p-10">
+    <div className="bg-gradient-to-br from-[#041a33] to-[#183B7E] text-white p-10">
       <div className="pb-5">
         <h1 className="text-6xl font-bold">{decodeURI(city)}</h1>
         <p className="text-xs text-gray-400">
@@ -20,7 +20,9 @@ function InformationPanel({ city, lat, long, results }: Props) {
         </p>
       </div>
 
-      <CityPicker />
+      <div className="text-black">
+        <CityPicker />
+      </div>
 
       <hr className="my-10" />
 
@@ -62,7 +64,7 @@ function InformationPanel({ city, lat, long, results }: Props) {
             height={75}
           />
           <div className="flex items-center justify-between space-x-10">
-            <p className="text-6xl font-semibold">{results.current_weather.temperature.toFixed(1)}°C</p>
+            <p className="text-6xl font-semibold">{(results.current_weather.temperature * 9/5 + 32).toFixed(1)}°F</p>
 
             <p className="text-right font-extralight text-lg">
               {weatherCodeToString[results.current_weather.weathercode].label}

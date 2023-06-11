@@ -28,29 +28,28 @@ async function WeatherPage({ params: { city, lat, long } }: Props) {
       current_weather: "true",
       longitude: long,
       latitude: lat,
-      timezone: "GMT",
+      timezone: "EST",
     },
   });
 
   const results: Root = data.myQuery;
-
-  // const dataToSend = cleanData(results, city);
+  const dataToSend = cleanData(results, city);
   
-  // const res = await fetch(`${getBasePath()}/api/getWeatherSummary`, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({
-  //     weatherData: dataToSend
-  //   })
-  // });
+  const res = await fetch(`${getBasePath()}/api/getWeatherSummary`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      weatherData: dataToSend
+    })
+  });
 
-  // const GPTData = await res.json();
-  // const { content } = GPTData;
+  const GPTData = await res.json();
+  const { content } = GPTData;
 
   return (
-    <div className="flex flex-col min-h-screen md:flex-row">
+    <div className="flex flex-col lg:flex-row min-h-screen">
       <InformationPanel city={city} long={long} lat={lat} results={results} />
       <div className="flex-1 p-5 lg:p-10">
         <div>
@@ -64,18 +63,18 @@ async function WeatherPage({ params: { city, lat, long } }: Props) {
               </p>
             </div>
             <div className="m-2 mb-10">
-              <CalloutCard message={"Chat GPT message goes here!"} />
+              <CalloutCard message={content} />
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 m-2">
               <StatCard
                 title="Maximum Temperature"
-                metric={`${results.daily.temperature_2m_max[0].toFixed(1)}`}
+                metric={`${(results.daily.temperature_2m_max[0] * 9/5 + 32).toFixed(1)}`}
                 color="yellow"
               />
               <StatCard
                 title="Minimum Temperature"
-                metric={`${results.daily.temperature_2m_min[0].toFixed(1)}`}
+                metric={`${(results.daily.temperature_2m_min[0] * 9/5 + 32).toFixed(1)}`}
                 color="green"
               />
 
@@ -100,7 +99,7 @@ async function WeatherPage({ params: { city, lat, long } }: Props) {
                   color="cyan"
                 />
                 <StatCard
-                  title="Minimum Temperature"
+                  title="Wind Direction"
                   metric={`${results.current_weather.winddirection.toFixed(1)}°`}
                   color="violet"
                 />

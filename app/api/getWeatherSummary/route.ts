@@ -16,7 +16,7 @@ export async function POST(request: Request) {
         content: "Pretend you're a weather news presenter presenting live on television. State the city you are providing a summary for, then give a summary of todays weather only."
       }, {
         role: 'user',
-        content: `Hi there, can I get a summary of todays weather, use the following information to get the weather data: ${JSON.stringify(weatherData)}`
+        content: `Hi there, can I get a summary of todays weather, use the following information to get the weather data: ${JSON.stringify(weatherData)} and make sure to convert the temperatures from Celsius to Farenheit.. `
       }
     ]
   })
