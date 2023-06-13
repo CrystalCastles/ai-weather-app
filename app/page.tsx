@@ -4,7 +4,6 @@
 import CityPicker from "@/components/CityPicker";
 import { Card, Divider, Subtitle, Text } from "@tremor/react";
 import { redirect } from 'next/navigation';
-import { useEffect, useState } from "react";
 
 export default function Home() {
   // const [coords, setCoords] = useState();

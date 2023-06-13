@@ -79,4 +79,4 @@ interface Root {
   timezone: string;
   timezone_abbreviation: string;
   utc_offset_seconds: number;
-}
+};
